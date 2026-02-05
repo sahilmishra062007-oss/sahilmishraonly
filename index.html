@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tools Hub - Free AI Directory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="light">
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- NAVBAR - Clean, No Admin Button -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fa-solid fa-robot"></i>
+            <span>AI Tools Hub</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#tools">Browse Tools</a>
+            <a href="#categories">Categories</a>
+            <a href="#chat">AI Assistant</a>
+        </div>
+        
+        <div class="nav-actions">
+            <button id="themeToggle" class="icon-btn" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-badge">
+            <i class="fa-solid fa-sparkles"></i> 100% Free Directory
+        </div>
+        <h1>Discover the Best <span class="gradient-text">AI Tools</span></h1>
+        <p>Curated collection of powerful AI tools. Browse, discover, and use - completely free!</p>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <i class="fa-solid fa-cubes"></i>
+                <span id="statTools">0</span>
+                <small>AI Tools</small>
+            </div>
+            <div class="stat">
+                <i class="fa-solid fa-mouse-pointer"></i>
+                <span id="statClicks">0</span>
+                <small>Total Uses</small>
+            </div>
+            <div class="stat">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Free</span>
+                <small>Forever</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEARCH & FILTERS -->
+    <section class="controls-section" id="tools">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search AI tools...">
+        </div>
+        
+        <div class="category-pills" id="categories">
+            <button class="pill active" data-filter="all">All</button>
+            <button class="pill" data-filter="chatbot">💬 Chatbots</button>
+            <button class="pill" data-filter="image">🎨 Image</button>
+            <button class="pill" data-filter="video">🎬 Video</button>
+            <button class="pill" data-filter="audio">🎵 Audio</button>
+            <button class="pill" data-filter="productivity">⚡ Productivity</button>
+            <button class="pill" data-filter="coding">💻 Coding</button>
+        </div>
+    </section>
+
+    <!-- TOOLS GRID -->
+    <main class="main-content">
+        <div class="tools-grid" id="toolsGrid"></div>
+        
+        <div id="emptyState" class="empty-state hidden">
+            <i class="fa-solid fa-box-open"></i>
+            <h3>No tools found</h3>
+            <p>Try a different search or check back later!</p>
+        </div>
+    </main>
+
+    <!-- CHATBOT -->
+    <section class="chat-section" id="chat">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fa-solid fa-robot"></i>
+                    <div>
+                        <h3>AI Assistant</h3>
+                        <span>Ask me about AI tools</span>
+                    </div>
+                </div>
+                <div class="chat-status">
+                    <span class="online-dot"></span> Online
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-avatar"><i class="fa-solid fa-robot"></i></div>
+                    <div class="message-content">
+                        <p>👋 Hi! I'm your AI assistant. I can help you find the perfect AI tool!</p>
+                        <p>Try asking: "Best image generator?" or "Tools for coding"</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Type your question...">
+                <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Made with <i class="fa-solid fa-heart" style="color:#ef4444;"></i> for AI enthusiasts</p>
+        <p class="footer-links">
+            <a href="#tools">Browse Tools</a> • 
+            <a href="#chat">AI Assistant</a>
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
