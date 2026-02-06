@@ -425,7 +425,7 @@ function handleAddTool(e) {
     var categoryField = document.getElementById('addCategory');
     var linkField = document.getElementById('addLink');
     var descField = document.getElementById('addDesc');
-    // --- NAYI LINE YAHAN DALO ---
+    // Naya data field yahan se uthayega
     var imageField = document.getElementById('toolImage'); 
     
     var newTool = {
@@ -434,13 +434,18 @@ function handleAddTool(e) {
         category: categoryField ? categoryField.value : '',
         link: linkField ? linkField.value.trim() : '',
         desc: descField ? descField.value.trim() : '',
-        // --- NAYI LINE YAHAN DALO ---
-        image: imageField ? imageField.value.trim() : 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png', 
+        // Logo URL yahan save hoga, agar khali hai toh default icon aayega
+        image: imageField && imageField.value.trim() !== '' ? imageField.value.trim() : 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
         clicks: 0,
         addedAt: Date.now()
     };
     
     tools.unshift(newTool);
+    saveTools(); // LocalStorage mein save karega
+    renderTools(); // Screen par dikhayega
+    addForm.reset(); 
+    alert("Tool Added with Logo!");
+}
     // Baaki ka code...
     saveTools();
     
@@ -733,3 +738,4 @@ window.openDeleteModal = openDeleteModal;
 window.closeDeleteModal = closeDeleteModal;
 
 window.trackClick = trackClick;
+
