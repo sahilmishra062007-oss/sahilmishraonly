@@ -425,6 +425,8 @@ function handleAddTool(e) {
     var categoryField = document.getElementById('addCategory');
     var linkField = document.getElementById('addLink');
     var descField = document.getElementById('addDesc');
+    // --- NAYI LINE YAHAN DALO ---
+    var imageField = document.getElementById('toolImage'); 
     
     var newTool = {
         id: Date.now(),
@@ -432,11 +434,14 @@ function handleAddTool(e) {
         category: categoryField ? categoryField.value : '',
         link: linkField ? linkField.value.trim() : '',
         desc: descField ? descField.value.trim() : '',
+        // --- NAYI LINE YAHAN DALO ---
+        image: imageField ? imageField.value.trim() : 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png', 
         clicks: 0,
         addedAt: Date.now()
     };
     
     tools.unshift(newTool);
+    // Baaki ka code...
     saveTools();
     
     e.target.reset();
@@ -726,4 +731,5 @@ window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
 window.openDeleteModal = openDeleteModal;
 window.closeDeleteModal = closeDeleteModal;
+
 window.trackClick = trackClick;
