@@ -159,24 +159,25 @@ body {
     border-color: var(--primary);
 }
 
-/* --- LOGO STYLING (UPDATED SMALLER) --- */
+/* --- APP ICON STYLE (52px - PERFECT BALANCED) --- */
 .tool-header {
     display: flex;
     align-items: center;
-    gap: 1rem; /* Gap thoda kam kar diya */
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
 }
 
 .tool-icon-container {
-    width: 44px;  /* Pehle 60px tha, ab chhota kar diya */
-    height: 44px;
-    border-radius: 10px; /* Thoda kam round */
-    background: #fff;
+    width: 52px;           /* App icon jaisa perfect size */
+    height: 52px;
+    border-radius: 12px;   /* Smooth squircle look */
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(0,0,0,0.05); /* Bohot halki border */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Halka sa ubhaar (lifted look) */
     flex-shrink: 0;
 }
 
@@ -184,17 +185,16 @@ body {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 4px; /* Image aur border ke beech halki jagah */
+    padding: 6px;          /* Logo ko thoda sa saans lene ki jagah */
 }
 
-/* Admin list ke liye bhi thoda chhota */
-.tool-item-info img {
-    width: 32px;
-    height: 32px;
+/* Admin panel mein bhi icon thoda sa bada aur saaf */
+.tool-item-icon img {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
     object-fit: contain;
-    margin-right: 8px;
 }
-
 /* CATEGORY COLORS */
 .tool-category.chatbot { background: #dbeafe; color: #1e40af; }
 .tool-category.image { background: #fce7f3; color: #9d174d; }
@@ -282,4 +282,5 @@ body {
     .hero h1 { font-size: 2.5rem; }
     .tools-grid { grid-template-columns: 1fr; }
 }
+
 
