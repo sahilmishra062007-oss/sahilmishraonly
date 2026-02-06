@@ -5,181 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smart Finder – Free AI Tools & Smart Resources</title>
     
-    <meta name="description" content="Smart Finder is a free platform to discover useful AI tools, smart apps and online resources. Created by Sahil Mishra." />
-    <meta name="keywords" content="AI tools, free AI tools, smart finder, online tools, AI website, best ai directory" />
-    <meta name="author" content="Sahil Mishra" />
+    <meta name="description" content="Discover the best free AI tools and premium resources on Smart Finder by Sahil Mishra." />
+    <meta name="keywords" content="AI tools, free AI tools hub, smart finder, Sahil Mishra AI" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+
+    <style>
+        .magic-button {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white !important;
+            padding: 15px 35px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body data-theme="light">
 
-    <!-- Toast Notifications -->
-    <div id="toastContainer" class="toast-container"></div>
-
-    <!-- NAVBAR - Clean, No Admin Button -->
     <nav class="navbar">
-        <div class="nav-brand">
-            <i class="fa-solid fa-robot"></i>
-            <span>AI Tools Hub</span>
-        </div>
-        
+        <div class="nav-brand"><span>AI Tools Hub</span></div>
         <div class="nav-links">
             <a href="#tools">Browse Tools</a>
-            <a href="#categories">Categories</a>
             <a href="#chat">AI Assistant</a>
-        </div>
-        
-        <div class="nav-actions">
-            <button id="themeToggle" class="icon-btn" title="Toggle Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
         </div>
     </nav>
 
-    <!-- HERO -->
     <header class="hero">
-        <div class="hero-badge">
-            <i class="fa-solid fa-sparkles"></i> 100% Free Directory
-        </div>
         <h1>Discover the Best <span class="gradient-text">AI Tools</span></h1>
-        <div style="text-align: center; margin: 30px 0;">
-    <a href="https://www.effectivegatecpm.com/iq6yvkx91w?key=4277e08d8af9deedfe83b8b968a35d6a" target="_blank" class="magic-button">
-        🚀 Access Premium AI Tools Free
-    </a>
-</div>
-
-<style>
-.magic-button {
-    background: linear-gradient(45deg, #6a11cb, #2575fc);
-    color: white !important;
-    padding: 15px 35px;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 50px;
-    display: inline-block;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: 0.3s;
-    animation: pulse 2s infinite;
-    font-family: sans-serif;
-}
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); box-shadow: 0 0 25px rgba(37, 117, 252, 0.7); }
-    100% { transform: scale(1); }
-}
-</style>
-        <p>Curated collection of powerful AI tools. Browse, discover, and use - completely free!</p>
         
-        <div class="stats-bar">
-            <div class="stat">
-                <i class="fa-solid fa-cubes"></i>
-                <span id="statTools">0</span>
-                <small>AI Tools</small>
-            </div>
-            <div class="stat">
-                <i class="fa-solid fa-mouse-pointer"></i>
-                <span id="statClicks">0</span>
-                <small>Total Uses</small>
-            </div>
-            <div class="stat">
-                <i class="fa-solid fa-bolt"></i>
-                <span>Free</span>
-                <small>Forever</small>
-            </div>
+        <div style="margin: 30px 0;">
+            <a href="https://www.effectivegatecpm.com/iq6yvkx91w?key=4277e08d8af9deedfe83b8b968a35d6a" target="_blank" class="magic-button">
+                🚀 Access Premium AI Tools Free
+            </a>
         </div>
+        <p>Hand-picked tools for you - completely free!</p>
     </header>
 
-    <!-- SEARCH & FILTERS -->
+    <div style="margin: 20px auto; text-align: center; max-width: 900px;">
+        <script async="async" data-cfasync="false" src="https://pl28654120.effectivegatecpm.com/d063d6dd9ca6d36f270c456cf66223f4/invoke.js"></script>
+        <div id="container-d063d6dd9ca6d36f270c456cf66223f4"></div>
+    </div>
+
     <section class="controls-section" id="tools">
-        <section class="controls-section" id="tools">
         <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="searchInput" placeholder="Search AI tools...">
         </div>
-        
-        <div style="margin: 20px 0; text-align: center;">
-            <script async="async" data-cfasync="false" src="https://pl28654120.effectivegatecpm.com/d063d6dd9ca6d36f270c456cf66223f4/invoke.js"></script>
-            <div id="container-d063d6dd9ca6d36f270c456cf66223f4"></div>
-        </div>
-        <div class="category-pills" id="categories">
-            <button class="pill active" data-filter="all">All</button>
-            </div>
-    </section>
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search AI tools...">
-        </div>
-        
         <div class="category-pills" id="categories">
             <button class="pill active" data-filter="all">All</button>
             <button class="pill" data-filter="chatbot">💬 Chatbots</button>
             <button class="pill" data-filter="image">🎨 Image</button>
             <button class="pill" data-filter="video">🎬 Video</button>
-            <button class="pill" data-filter="audio">🎵 Audio</button>
-            <button class="pill" data-filter="productivity">⚡ Productivity</button>
-            <button class="pill" data-filter="coding">💻 Coding</button>
         </div>
     </section>
 
-    <!-- TOOLS GRID -->
     <main class="main-content">
         <div class="tools-grid" id="toolsGrid"></div>
-        
-        <div id="emptyState" class="empty-state hidden">
-            <i class="fa-solid fa-box-open"></i>
-            <h3>No tools found</h3>
-            <p>Try a different search or check back later!</p>
-        </div>
     </main>
-
-    <!-- CHATBOT -->
-    <section class="chat-section" id="chat">
-        <div class="chat-container">
-            <div class="chat-header">
-                <div class="chat-title">
-                    <i class="fa-solid fa-robot"></i>
-                    <div>
-                        <h3>AI Assistant</h3>
-                        <span>Ask me about AI tools</span>
-                    </div>
-                </div>
-                <div class="chat-status">
-                    <span class="online-dot"></span> Online
-                </div>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot">
-                    <div class="message-avatar"><i class="fa-solid fa-robot"></i></div>
-                    <div class="message-content">
-                        <p>👋 Hi! I'm your AI assistant. I can help you find the perfect AI tool!</p>
-                        <p>Try asking: "Best image generator?" or "Tools for coding"</p>
-                    </div>
-                </div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="Type your question...">
-                <button id="sendBtn" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <p>Made with <i class="fa-solid fa-heart" style="color:#ef4444;"></i> for AI enthusiasts</p>
-        <p class="footer-links">
-            <a href="#tools">Browse Tools</a> • 
-            <a href="#chat">AI Assistant</a>
-        </p>
-    </footer>
 
     <script src="script.js"></script>
     <script src="https://pl28654085.effectivegatecpm.com/47/1b/c1/471bc1ae5b2135294bf6d905303c5f76.js"></script>
 </body>
-
 </html>
-
-
-
-
