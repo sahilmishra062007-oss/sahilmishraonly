@@ -10,13 +10,13 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-storage-compat.js"></script>
 
     <style>
         .login-screen {
             background: radial-gradient(circle at top right, #1e293b, #0f172a);
             height: 100vh; display: flex; align-items: center; justify-content: center;
         }
-        /* Dashboard styles (Sirf login ke baad kaam aayenge) */
         .preview-box {
             width: 70px; height: 70px; border-radius: 16px; 
             background: white; margin: 10px 0 20px; 
@@ -26,6 +26,19 @@
         .preview-box img { width: 75%; height: 75%; object-fit: contain; }
         #adminToolsList::-webkit-scrollbar { width: 6px; }
         #adminToolsList::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        
+        /* Upload styling */
+        .file-input-wrapper {
+            margin-bottom: 15px;
+        }
+        input[type="file"] {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            color: white;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body data-theme="dark">
