@@ -1,12 +1,12 @@
-// FIREBASE CONFIG
+// ⚙️ FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyDAVY2FKh9YKqviuQz34VNAToxo0SfCJTQ",
-  authDomain: "smart-52618.firebaseapp.com",
-  projectId: "smart-52618",
-  storageBucket: "smart-52618.firebasestorage.app",
-  messagingSenderId: "931868149631",
-  appId: "1:931868149631:web:48c37395b0df7e55427c4a",
-  databaseURL: "https://smart-52618-default-rtdb.firebaseio.com/"
+    apiKey: "AIzaSyDAVY2FKh9YKqviuQz34VNAToxo0SfCJTQ",
+    authDomain: "smart-52618.firebaseapp.com",
+    projectId: "smart-52618",
+    storageBucket: "smart-52618.firebasestorage.app",
+    messagingSenderId: "931868149631",
+    appId: "1:931868149631:web:48c37395b0df7e55427c4a",
+    databaseURL: "https://smart-52618-default-rtdb.firebaseio.com/"
 };
 
 // Initialize Firebase
@@ -18,34 +18,33 @@ const db = firebase.database();
 let tools = [];
 const IS_ADMIN_PAGE = window.location.pathname.includes('admin.html');
 
-// 🔐 SECURE LOGIN SYSTEM
-// Aapka Password: 20180047226 (Base64 encoded: MjAxODAwNDcyMjY=)
+// 🔐 SECURE LOGIN (Pass: 20180047226)
 document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             const passInput = document.getElementById('adminPassword').value;
+            // Password "20180047226" logic
             if (btoa(passInput) === "MjAxODAwNDcyMjY=") {
                 sessionStorage.setItem('adminAuth', 'true');
                 showDashboard();
-                showToast("Welcome Back, Sahil!", "success");
             } else {
-                alert("Wrong Password!");
+                alert("Wrong Password! Access Denied.");
             }
         });
     }
 
-    // Check Auth Status on Admin Page
+    // Auth Guard
     if (IS_ADMIN_PAGE && sessionStorage.getItem('adminAuth') === 'true') {
         showDashboard();
     }
 });
 
-// 🚀 DATA FETCHING & SYNC
+// 🚀 REAL-TIME DATA SYNC
 db.ref('tools').on('value', (snap) => {
     const data = snap.val();
     tools = data ? Object.keys(data).map(k => ({fid: k, ...data[k]})) : [];
-    tools.sort((a, b) => b.addedAt - a.addedAt);
+    tools.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
     
     if (IS_ADMIN_PAGE) {
         if (sessionStorage.getItem('adminAuth') === 'true') {
@@ -57,7 +56,7 @@ db.ref('tools').on('value', (snap) => {
     }
 });
 
-// 📱 RENDER PUBLIC TOOLS (Index Page)
+// 📱 PUBLIC VIEW (Index Page)
 function renderPublicTools(search = '') {
     const grid = document.getElementById('toolsGrid');
     if(!grid) return;
@@ -71,11 +70,16 @@ function renderPublicTools(search = '') {
         (t.name.toLowerCase().includes(search.toLowerCase()) || t.desc.toLowerCase().includes(search.toLowerCase()))
     );
 
+    if(filtered.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">No tools found in this category.</p>`;
+        return;
+    }
+
     filtered.forEach(t => {
         grid.innerHTML += `
-        <div class="tool-card animate-in">
+        <div class="tool-card">
             <div class="tool-icon-container">
-                <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png'}" class="tool-card-img">
+                <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png'}" class="tool-card-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
             </div>
             <div class="tool-info">
                 <span class="tool-category ${t.category}">${t.category}</span>
@@ -83,14 +87,14 @@ function renderPublicTools(search = '') {
                 <p class="tool-desc">${t.desc}</p>
                 <div class="tool-footer">
                     <span><i class="fa-solid fa-fire"></i> ${t.clicks || 0}</span>
-                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-visit">Open Tool</a>
+                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-visit">Get Started</a>
                 </div>
             </div>
         </div>`;
     });
 }
 
-// 🛠️ ADMIN: RENDER TOOLS LIST WITH EDIT/DELETE
+// 🛠️ ADMIN PANEL FUNCTIONS
 function renderAdminTools() {
     const list = document.getElementById('adminToolsList');
     if(!list) return;
@@ -98,40 +102,35 @@ function renderAdminTools() {
 
     tools.forEach(t => {
         list.innerHTML += `
-        <div class="tool-item">
-            <div class="tool-item-info">
-                <img src="${t.image}" style="width:40px; height:40px; border-radius:8px;">
+        <div class="tool-item" style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img src="${t.image}" style="width:40px; height:40px; border-radius:8px; object-fit: cover;">
                 <div>
                     <h4 style="margin:0">${t.name}</h4>
-                    <small>${t.clicks} Clicks</small>
+                    <small style="color: #94a3b8;">${t.category} • ${t.clicks || 0} Clicks</small>
                 </div>
             </div>
-            <div class="tool-item-actions">
-                <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>
+            <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:8px; border-radius:6px; cursor:pointer;">
+                <i class="fa-solid fa-trash"></i>
+            </button>
         </div>`;
     });
 }
 
-// 📈 UPDATE DASHBOARD STATS
 function updateStats() {
-    document.getElementById('adminStatTools').innerText = tools.length;
-    const totalClicks = tools.reduce((sum, t) => sum + (t.clicks || 0), 0);
-    document.getElementById('adminStatClicks').innerText = totalClicks;
-    document.getElementById('adminLastUpdated').innerText = new Date().toLocaleTimeString();
-}
-
-// 🖱️ TRACK CLICKS
-function trackClick(id) {
-    const tool = tools.find(t => t.fid === id);
-    if(tool) {
-        db.ref('tools/' + id).update({ clicks: (tool.clicks || 0) + 1 });
+    if(document.getElementById('adminStatTools')) {
+        document.getElementById('adminStatTools').innerText = tools.length;
+        const totalClicks = tools.reduce((sum, t) => sum + (t.clicks || 0), 0);
+        document.getElementById('adminStatClicks').innerText = totalClicks;
+        document.getElementById('adminLastUpdated').innerText = new Date().toLocaleTimeString();
     }
 }
 
-// ➕ ADD NEW TOOL
+function trackClick(id) {
+    db.ref('tools/' + id).child('clicks').transaction((current) => (current || 0) + 1);
+}
+
+// ➕ ADD TOOL LOGIC
 const addForm = document.getElementById('addToolForm');
 if (addForm) {
     addForm.addEventListener('submit', (e) => {
@@ -146,19 +145,15 @@ if (addForm) {
             addedAt: Date.now()
         };
         db.ref('tools').push(newTool).then(() => {
-            alert("Tool Added Successfully!");
+            alert("Success! Tool is now live.");
             addForm.reset();
-            document.getElementById('imgPrev').src = 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png';
-        });
+        }).catch(err => alert("Error: " + err.message));
     });
 }
 
-// 🗑️ DELETE TOOL
 function deleteTool(id) {
-    if(confirm("Are you sure you want to delete this tool?")) {
-        db.ref('tools/' + id).remove().then(() => {
-            alert("Tool Removed!");
-        });
+    if(confirm("Permanently delete this tool?")) {
+        db.ref('tools/' + id).remove();
     }
 }
 
@@ -167,27 +162,26 @@ const logoutBtn = document.getElementById('logoutBtn');
 if(logoutBtn) {
     logoutBtn.addEventListener('click', () => {
         sessionStorage.removeItem('adminAuth');
-        location.reload();
+        location.href = 'index.html';
     });
 }
 
-// 🖼️ UI HELPERS
 function showDashboard() {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('adminDashboard').classList.remove('hidden');
+    if(document.getElementById('loginScreen')) document.getElementById('loginScreen').classList.add('hidden');
+    if(document.getElementById('adminDashboard')) document.getElementById('adminDashboard').classList.remove('hidden');
 }
 
-// Search Logic for Index Page
-const searchInput = document.getElementById('searchInput');
-if(searchInput) {
-    searchInput.addEventListener('input', (e) => renderPublicTools(e.target.value));
+// 🔍 SEARCH & FILTER EVENT LISTENERS
+const sInput = document.getElementById('searchInput');
+if(sInput) {
+    sInput.addEventListener('input', (e) => renderPublicTools(e.target.value));
 }
 
-// Category Filter Logic
-document.querySelectorAll('.pill').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelector('.pill.active').classList.remove('active');
-        this.classList.add('active');
+// Delegate Click for Pills
+document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('pill')) {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        e.target.classList.add('active');
         renderPublicTools(document.getElementById('searchInput')?.value || '');
-    });
+    }
 });
