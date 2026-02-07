@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             const passInput = document.getElementById('adminPassword').value;
-            // Password "20180047226" logic
+            // "20180047226" encoded in Base64 is "MjAxODAwNDcyMjY="
             if (btoa(passInput) === "MjAxODAwNDcyMjY=") {
                 sessionStorage.setItem('adminAuth', 'true');
                 showDashboard();
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Auth Guard
+    // Auth Guard - Page load par check karein
     if (IS_ADMIN_PAGE && sessionStorage.getItem('adminAuth') === 'true') {
         showDashboard();
     }
@@ -71,7 +71,7 @@ function renderPublicTools(search = '') {
     );
 
     if(filtered.length === 0) {
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">No tools found in this category.</p>`;
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">No tools found.</p>`;
         return;
     }
 
@@ -94,7 +94,7 @@ function renderPublicTools(search = '') {
     });
 }
 
-// 🛠️ ADMIN PANEL FUNCTIONS
+// 🛠️ ADMIN FUNCTIONS (Only work if Authenticated)
 function renderAdminTools() {
     const list = document.getElementById('adminToolsList');
     if(!list) return;
@@ -105,14 +105,9 @@ function renderAdminTools() {
         <div class="tool-item" style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <img src="${t.image}" style="width:40px; height:40px; border-radius:8px; object-fit: cover;">
-                <div>
-                    <h4 style="margin:0">${t.name}</h4>
-                    <small style="color: #94a3b8;">${t.category} • ${t.clicks || 0} Clicks</small>
-                </div>
+                <div><h4 style="margin:0">${t.name}</h4><small>${t.category}</small></div>
             </div>
-            <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:8px; border-radius:6px; cursor:pointer;">
-                <i class="fa-solid fa-trash"></i>
-            </button>
+            <button onclick="deleteTool('${t.fid}')" class="btn-danger"><i class="fa-solid fa-trash"></i></button>
         </div>`;
     });
 }
@@ -130,11 +125,19 @@ function trackClick(id) {
     db.ref('tools/' + id).child('clicks').transaction((current) => (current || 0) + 1);
 }
 
-// ➕ ADD TOOL LOGIC
+// ➕ SECURE ADD TOOL LOGIC
 const addForm = document.getElementById('addToolForm');
 if (addForm) {
     addForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        // 🛡️ AUTH CHECK BEFORE UPLOAD
+        if (sessionStorage.getItem('adminAuth') !== 'true') {
+            alert("Security Error: Please login first!");
+            location.reload();
+            return;
+        }
+
         const newTool = {
             name: document.getElementById('addName').value,
             category: document.getElementById('addCategory').value,
@@ -144,14 +147,17 @@ if (addForm) {
             clicks: 0,
             addedAt: Date.now()
         };
+
         db.ref('tools').push(newTool).then(() => {
-            alert("Success! Tool is now live.");
+            alert("Tool Added Successfully!");
             addForm.reset();
         }).catch(err => alert("Error: " + err.message));
     });
 }
 
+// 🗑️ SECURE DELETE
 function deleteTool(id) {
+    if (sessionStorage.getItem('adminAuth') !== 'true') return;
     if(confirm("Permanently delete this tool?")) {
         db.ref('tools/' + id).remove();
     }
@@ -167,17 +173,18 @@ if(logoutBtn) {
 }
 
 function showDashboard() {
-    if(document.getElementById('loginScreen')) document.getElementById('loginScreen').classList.add('hidden');
-    if(document.getElementById('adminDashboard')) document.getElementById('adminDashboard').classList.remove('hidden');
+    const loginScr = document.getElementById('loginScreen');
+    const adminDash = document.getElementById('adminDashboard');
+    if(loginScr) loginScr.classList.add('hidden');
+    if(adminDash) adminDash.classList.remove('hidden');
 }
 
-// 🔍 SEARCH & FILTER EVENT LISTENERS
+// 🔍 SEARCH & FILTER
 const sInput = document.getElementById('searchInput');
 if(sInput) {
     sInput.addEventListener('input', (e) => renderPublicTools(e.target.value));
 }
 
-// Delegate Click for Pills
 document.addEventListener('click', (e) => {
     if(e.target.classList.contains('pill')) {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
