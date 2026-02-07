@@ -11,7 +11,6 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const storage = firebase.storage(); // Photo upload ke liye
 
 let tools = [];
 const IS_ADMIN_PAGE = window.location.pathname.includes('admin.html');
@@ -21,7 +20,7 @@ function isUserAdmin() {
     return sessionStorage.getItem('adminAuth') === 'true';
 }
 
-// 🔐 DASHBOARD TEMPLATE (Updated with File Input)
+// 🔐 DASHBOARD TEMPLATE (Updated to URL Input for Free Plan)
 const ADMIN_DASHBOARD_TEMPLATE = `
     <div id="adminDashboard">
         <nav class="navbar">
@@ -54,17 +53,19 @@ const ADMIN_DASHBOARD_TEMPLATE = `
                             <option value="audio">🎵 Audio AI</option>
                         </select>
 
-                        <label style="font-size:0.8rem; color:var(--text-secondary);">Upload Icon Image:</label>
-                        <input type="file" id="toolImageFile" accept="image/*" style="margin:10px 0;" onchange="previewImage(this)">
+                        <label style="font-size:0.8rem; color:var(--text-secondary);">Tool Icon URL (Upload on ImgBB and paste link):</label>
+                        <input type="text" id="toolImageUrl" placeholder="https://i.ibb.co/example.png" 
+                               style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;"
+                               oninput="document.getElementById('imgPrev').src = this.value">
                         
                         <div class="preview-box">
-                            <img id="imgPrev" src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png">
+                            <img id="imgPrev" src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
                         </div>
 
                         <input type="url" id="addLink" placeholder="Tool Website Link" required style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;">
                         <textarea id="addDesc" placeholder="Description..." required style="width:100%; height:80px; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;"></textarea>
                         
-                        <button type="submit" id="submitBtn" class="btn-visit" style="width:100%; border:none; padding:15px; cursor:pointer;">Add Tool</button>
+                        <button type="submit" id="submitBtn" class="btn-visit" style="width:100%; border:none; padding:15px; cursor:pointer;">Deploy Tool</button>
                     </form>
                 </section>
 
@@ -76,15 +77,6 @@ const ADMIN_DASHBOARD_TEMPLATE = `
         </main>
     </div>
 `;
-
-// 🖼️ IMAGE PREVIEW FUNCTION
-function previewImage(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => document.getElementById('imgPrev').src = e.target.result;
-        reader.readAsDataURL(input.files[0]);
-    }
-}
 
 // 🔐 LOGIN LOGIC
 document.addEventListener('DOMContentLoaded', () => {
@@ -132,7 +124,6 @@ function renderDashboardFlow() {
     }
 }
 
-// 📸 PHOTO UPLOAD & TOOL ADD LOGIC
 function initAdminFunctions() {
     const addForm = document.getElementById('addToolForm');
     if (!addForm) return;
@@ -140,28 +131,16 @@ function initAdminFunctions() {
     addForm.onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        const fileInput = document.getElementById('toolImageFile');
-        
-        btn.innerText = "Processing...";
+        btn.innerText = "Deploying...";
         btn.disabled = true;
 
         try {
-            let imageUrl = "https://cdn-icons-png.flaticon.com/512/2103/2103633.png";
-
-            // Agar user ne file select ki hai toh upload karo
-            if (fileInput.files[0]) {
-                const file = fileInput.files[0];
-                const storageRef = storage.ref('tool_icons/' + Date.now() + "_" + file.name);
-                const snapshot = await storageRef.put(file);
-                imageUrl = await snapshot.ref.getDownloadURL();
-            }
-
             const newTool = {
                 name: document.getElementById('addName').value,
                 category: document.getElementById('addCategory').value,
                 link: document.getElementById('addLink').value,
                 desc: document.getElementById('addDesc').value,
-                image: imageUrl,
+                image: document.getElementById('toolImageUrl').value || "https://cdn-icons-png.flaticon.com/512/2103/2103633.png",
                 clicks: 0,
                 addedAt: Date.now()
             };
@@ -170,12 +149,10 @@ function initAdminFunctions() {
             alert("Tool Added Successfully!");
             addForm.reset();
             document.getElementById('imgPrev').src = "https://cdn-icons-png.flaticon.com/512/2103/2103633.png";
-
         } catch (err) {
-            console.error(err);
-            alert("Upload failed: " + err.message);
+            alert("Error: " + err.message);
         } finally {
-            btn.innerText = "Add Tool";
+            btn.innerText = "Deploy Tool";
             btn.disabled = false;
         }
     };
@@ -187,12 +164,12 @@ function renderAdminTools(search = '') {
     if(!list) return;
     const filtered = tools.filter(t => t.name.toLowerCase().includes(search.toLowerCase()));
     list.innerHTML = filtered.map(t => `
-        <div class="tool-item">
+        <div class="tool-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:8px;">
             <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${t.image}" style="width:35px; height:35px; border-radius:6px; background:white;">
+                <img src="${t.image}" style="width:35px; height:35px; border-radius:6px; background:white; object-fit:contain;">
                 <span>${t.name}</span>
             </div>
-            <button onclick="deleteTool('${t.fid}')" class="btn-danger" style="padding:5px 10px;">Delete</button>
+            <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Delete</button>
         </div>`).join('');
 }
 
@@ -212,7 +189,7 @@ function trackClick(id) {
     db.ref('tools/' + id).child('clicks').transaction((c) => (c || 0) + 1);
 }
 
-// 📱 PUBLIC RENDER (Wahi purana)
+// 📱 PUBLIC RENDER
 function renderPublicTools(search = '') {
     const grid = document.getElementById('toolsGrid');
     if(!grid) return;
@@ -228,9 +205,9 @@ function renderPublicTools(search = '') {
                 <span class="tool-category ${t.category}">${t.category}</span>
                 <h3>${t.name}</h3>
                 <p class="tool-desc">${t.desc}</p>
-                <div class="tool-footer">
-                    <span>🔥 ${t.clicks || 0}</span>
-                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-visit">Open</a>
+                <div class="tool-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.8rem; color:var(--text-secondary);">🔥 ${t.clicks || 0}</span>
+                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-visit" style="padding:5px 15px;">Open</a>
                 </div>
             </div>
         </div>`;
