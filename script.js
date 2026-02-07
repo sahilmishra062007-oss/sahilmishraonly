@@ -20,58 +20,61 @@ function isUserAdmin() {
     return sessionStorage.getItem('adminAuth') === 'true';
 }
 
-// 🔐 DASHBOARD TEMPLATE (Updated to URL Input for Free Plan)
+// 🔐 DASHBOARD TEMPLATE
 const ADMIN_DASHBOARD_TEMPLATE = `
     <div id="adminDashboard">
         <nav class="navbar">
             <div class="nav-brand"><i class="fa-solid fa-bolt"></i> <span>DASHBOARD</span></div>
             <div class="nav-links">
-                <button id="logoutBtn" class="btn-danger">Logout</button>
+                <button id="logoutBtn" class="btn-danger" style="padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; background: #ef4444; color: white;">Logout</button>
             </div>
         </nav>
 
         <main class="dashboard-content" style="padding: 2rem 5%;">
             <div class="admin-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="tool-card" style="text-align: center; padding: 15px;">
-                    <p>Total Tools</p><h2 id="adminStatTools" style="color:var(--primary)">0</h2>
+                <div class="tool-card" style="text-align: center; padding: 20px;">
+                    <p style="color: var(--text-secondary);">Total Tools</p><h2 id="adminStatTools" style="color:var(--primary); font-size: 2rem;">0</h2>
                 </div>
-                <div class="tool-card" style="text-align: center; padding: 15px;">
-                    <p>Total Clicks</p><h2 id="adminStatClicks" style="color:#10b981">0</h2>
+                <div class="tool-card" style="text-align: center; padding: 20px;">
+                    <p style="color: var(--text-secondary);">Total Clicks</p><h2 id="adminStatClicks" style="color:#10b981; font-size: 2rem;">0</h2>
                 </div>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
-                <section class="tool-card">
-                    <h2 style="margin-bottom:15px;">Add New Tool</h2>
+                <section class="tool-card" style="padding: 25px;">
+                    <h2 style="margin-bottom:20px;"><i class="fa-solid fa-plus-circle"></i> Add New Tool</h2>
                     <form id="addToolForm">
-                        <input type="text" id="addName" placeholder="Tool Name" required style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff;">
+                        <input type="text" id="addName" placeholder="Tool Name" required style="width:100%; margin-bottom:12px; padding:12px; border-radius:8px; border:1px solid var(--border); background:#000; color:#fff;">
                         
-                        <select id="addCategory" required style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;">
-                            <option value="chatbot">💬 Chatbot</option>
-                            <option value="image">🎨 Image AI</option>
+                        <select id="addCategory" required style="width:100%; margin-bottom:12px; padding:12px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border);">
+                            <option value="chatbot">💬 Chatbot AI</option>
+                            <option value="image">🎨 Image Generator</option>
                             <option value="video">🎬 Video AI</option>
-                            <option value="audio">🎵 Audio AI</option>
+                            <option value="audio">🎵 Music/Audio</option>
                         </select>
 
-                        <label style="font-size:0.8rem; color:var(--text-secondary);">Tool Icon URL (Upload on ImgBB and paste link):</label>
-                        <input type="text" id="toolImageUrl" placeholder="https://i.ibb.co/example.png" 
-                               style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;"
+                        <label style="font-size:0.8rem; color:var(--text-secondary);">Icon Image URL (Use ImgBB Direct Link):</label>
+                        <input type="text" id="toolImageUrl" placeholder="https://i.ibb.co/..." 
+                               style="width:100%; margin-bottom:12px; padding:12px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border);"
                                oninput="document.getElementById('imgPrev').src = this.value">
                         
-                        <div class="preview-box">
-                            <img id="imgPrev" src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
+                        <div class="preview-box" style="width: 60px; height: 60px; background: white; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--primary);">
+                            <img id="imgPrev" src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" style="width: 80%; height: 80%; object-fit: contain;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
                         </div>
 
-                        <input type="url" id="addLink" placeholder="Tool Website Link" required style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;">
-                        <textarea id="addDesc" placeholder="Description..." required style="width:100%; height:80px; margin-bottom:10px; padding:12px; border-radius:8px; background:#000; color:#fff;"></textarea>
+                        <input type="url" id="addLink" placeholder="Website URL" required style="width:100%; margin-bottom:12px; padding:12px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border);">
+                        <textarea id="addDesc" placeholder="Short description..." required style="width:100%; height:80px; margin-bottom:15px; padding:12px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border);"></textarea>
                         
-                        <button type="submit" id="submitBtn" class="btn-visit" style="width:100%; border:none; padding:15px; cursor:pointer;">Deploy Tool</button>
+                        <button type="submit" id="submitBtn" class="btn-visit" style="width:100%; border:none; padding:15px; cursor:pointer; font-weight: bold; font-size: 1rem;">Deploy Tool</button>
                     </form>
                 </section>
 
-                <section class="tool-card">
-                    <input type="text" id="adminSearch" placeholder="Search inventory..." style="width:100%; margin-bottom:15px; padding:10px; border-radius:8px; background:#000; border:1px solid var(--border); color:#fff;">
-                    <div id="adminToolsList"></div>
+                <section class="tool-card" style="padding: 25px;">
+                    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2 style="margin:0;">Inventory</h2>
+                        <input type="text" id="adminSearch" placeholder="Search..." style="width:150px; padding:8px; border-radius:8px; background:#000; border:1px solid var(--border); color:#fff;">
+                    </div>
+                    <div id="adminToolsList" style="max-height: 500px; overflow-y: auto;"></div>
                 </section>
             </div>
         </main>
@@ -164,12 +167,15 @@ function renderAdminTools(search = '') {
     if(!list) return;
     const filtered = tools.filter(t => t.name.toLowerCase().includes(search.toLowerCase()));
     list.innerHTML = filtered.map(t => `
-        <div class="tool-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; margin-bottom:8px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${t.image}" style="width:35px; height:35px; border-radius:6px; background:white; object-fit:contain;">
-                <span>${t.name}</span>
+        <div class="tool-item" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:12px; border-radius:10px; margin-bottom:10px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <img src="${t.image}" style="width:40px; height:40px; border-radius:8px; background:white; object-fit:contain; padding: 2px;">
+                <div>
+                    <div style="font-weight:bold; font-size:0.9rem;">${t.name}</div>
+                    <div style="font-size:0.7rem; color:var(--primary);">${t.category}</div>
+                </div>
             </div>
-            <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Delete</button>
+            <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:8px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
         </div>`).join('');
 }
 
@@ -182,21 +188,27 @@ function updateStats() {
 }
 
 function deleteTool(id) {
-    if (confirm("Delete this tool?")) db.ref('tools/' + id).remove();
+    if (confirm("Delete this tool forever?")) db.ref('tools/' + id).remove();
 }
 
 function trackClick(id) {
     db.ref('tools/' + id).child('clicks').transaction((c) => (c || 0) + 1);
 }
 
-// 📱 PUBLIC RENDER
+// 📱 PUBLIC RENDER (With Category Filtering)
 function renderPublicTools(search = '') {
     const grid = document.getElementById('toolsGrid');
     if(!grid) return;
-    grid.innerHTML = '';
-    const filtered = tools.filter(t => t.name.toLowerCase().includes(search.toLowerCase()));
-    filtered.forEach(t => {
-        grid.innerHTML += `
+    
+    const activePill = document.querySelector('.pill.active');
+    const filter = activePill ? activePill.dataset.filter : 'all';
+    
+    const filtered = tools.filter(t => 
+        (filter === 'all' || t.category === filter) && 
+        t.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    grid.innerHTML = filtered.map(t => `
         <div class="tool-card">
             <div class="tool-icon-container">
                 <img src="${t.image}" class="tool-card-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
@@ -206,10 +218,18 @@ function renderPublicTools(search = '') {
                 <h3>${t.name}</h3>
                 <p class="tool-desc">${t.desc}</p>
                 <div class="tool-footer" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.8rem; color:var(--text-secondary);">🔥 ${t.clicks || 0}</span>
-                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-visit" style="padding:5px 15px;">Open</a>
+                    <span style="font-size:0.8rem; color:var(--text-secondary);"><i class="fa-solid fa-fire"></i> ${t.clicks || 0}</span>
+                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-visit" style="padding:6px 18px;">Open</a>
                 </div>
             </div>
-        </div>`;
-    });
+        </div>`).join('');
 }
+
+// Category Pill click listener for index.html
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('pill')) {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        e.target.classList.add('active');
+        renderPublicTools(document.getElementById('toolSearch')?.value || '');
+    }
+});
