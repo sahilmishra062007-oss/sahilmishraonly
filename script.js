@@ -1,7 +1,4 @@
-// ============================================
-// AI TOOLS HUB - PRO VERSION (FIREBASE + SECURE)
-// ============================================
-
+// FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyDAVY2FKh9YKqviuQz34VNAToxo0SfCJTQ",
   authDomain: "smart-52618.firebaseapp.com",
@@ -12,94 +9,68 @@ const firebaseConfig = {
   databaseURL: "https://smart-52618-default-rtdb.firebaseio.com/"
 };
 
-// Initialize Firebase
-if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 🗂️ STATE
 let tools = [];
-const DEFAULT_ICON = 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png';
-const IS_ADMIN_PAGE = window.location.pathname.includes('admin');
+const IS_ADMIN = window.location.pathname.includes('admin');
 
-// ============================================
-// 🔐 SECURE LOGIN SYSTEM (New Password Logic)
-// ============================================
-const ADMIN_HASH = "b988f000754854f378036d6a8f6d2e07"; // Ye 'admin@2026' ka encrypted code hai
-
+// 🔐 SECURE LOGIN (Hidden Password)
 function handleLogin() {
-    const passwordInput = document.getElementById('adminPassword').value;
-    
-    // Simple but Secure check
-    if (passwordInput === "admin@2026") { // <--- YE AAPKA NAYA PASSWORD HAI
-        sessionStorage.setItem('is_auth', 'true');
-        showAdminDashboard();
-        showToast('Welcome Back, Admin!', 'success');
+    const pass = document.getElementById('adminPassword').value;
+    // Password "smartadmin2026" is hidden as Base64
+    if (btoa(pass) === "c21hcnRhZG1pbjIwMjY=") {
+        sessionStorage.setItem('adminAuth', 'true');
+        location.reload(); 
     } else {
-        showToast('Unauthorized Access!', 'error');
+        alert("Access Denied!");
     }
 }
 
-// ============================================
-// 🚀 CORE ENGINE (Fetching Data)
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
-    db.ref('tools').on('value', (snapshot) => {
-        const data = snapshot.val();
-        tools = [];
-        if (data) {
-            Object.keys(data).forEach(key => {
-                tools.push({ fid: key, ...data[key] });
-            });
-            tools.sort((a, b) => b.addedAt - a.addedAt);
-        }
+// 🚀 DATA FETCHING
+document.addEventListener('DOMContentLoaded', () => {
+    db.ref('tools').on('value', (snap) => {
+        const data = snap.val();
+        tools = data ? Object.keys(data).map(k => ({fid: k, ...data[k]})) : [];
+        tools.sort((a, b) => b.addedAt - a.addedAt);
         
-        if (IS_ADMIN_PAGE) {
-            if (sessionStorage.getItem('is_auth') === 'true') showAdminDashboard();
+        if (IS_ADMIN) {
+            if (sessionStorage.getItem('adminAuth') === 'true') showDashboard();
         } else {
-            renderPublicTools();
+            renderTools();
         }
-        updateStats();
     });
 });
 
-// ============================================
-// 🎨 ENHANCED UI RENDERING
-// ============================================
-function renderPublicTools(search = '') {
+function renderTools(search = '') {
     const grid = document.getElementById('toolsGrid');
-    if (!grid) return;
+    if(!grid) return;
     grid.innerHTML = '';
     
     const filter = document.querySelector('.pill.active')?.dataset.filter || 'all';
     
-    const filtered = tools.filter(t => {
-        const matchesSearch = t.name.toLowerCase().includes(search) || t.desc.toLowerCase().includes(search);
-        const matchesFilter = filter === 'all' || t.category === filter;
-        return matchesSearch && matchesFilter;
-    });
-
-    filtered.forEach(tool => {
-        const card = document.createElement('div');
-        card.className = 'tool-card animate-in'; // Animation class added
-        card.innerHTML = `
-            <div class="tool-tag">${tool.category}</div>
-            <div class="tool-header">
-                <img src="${tool.image || DEFAULT_ICON}" onerror="this.src='${DEFAULT_ICON}'" alt="${tool.name}">
-                <h3>${tool.name}</h3>
-            </div>
-            <p>${tool.desc}</p>
-            <div class="tool-actions">
-                <span><i class="fa-solid fa-fire"></i> ${tool.clicks || 0}</span>
-                <a href="${tool.link}" target="_blank" onclick="trackClick('${tool.fid}')" class="visit-btn">Open Tool</a>
-            </div>
-        `;
-        grid.appendChild(card);
+    tools.filter(t => (filter === 'all' || t.category === filter) && 
+                 (t.name.toLowerCase().includes(search) || t.desc.toLowerCase().includes(search)))
+         .forEach(t => {
+            grid.innerHTML += `
+            <div class="tool-card">
+                <div class="card-glass"></div>
+                <img src="${t.image || 'default-icon.png'}" class="tool-img">
+                <h3>${t.name}</h3>
+                <p>${t.desc}</p>
+                <div class="card-footer">
+                    <span><i class="fa-solid fa-bolt"></i> ${t.clicks || 0}</span>
+                    <a href="${t.link}" target="_blank" onclick="trackClick('${t.fid}')" class="btn-main">Get Started</a>
+                </div>
+            </div>`;
     });
 }
 
-// ============================================
-// 🛠️ ADMIN ACTIONS
-// ============================================
+function trackClick(id) {
+    const tool = tools.find(t => t.fid === id);
+    db.ref('tools/' + id).update({ clicks: (tool.clicks || 0) + 1 });
+}
+
 function handleAddTool(e) {
     e.preventDefault();
     const newTool = {
@@ -111,39 +82,11 @@ function handleAddTool(e) {
         clicks: 0,
         addedAt: Date.now()
     };
-
     db.ref('tools').push(newTool).then(() => {
-        showToast('Tool Added Successfully!', 'success');
+        alert("Tool Live!");
         e.target.reset();
     });
 }
 
-function trackClick(id) {
-    const tool = tools.find(t => t.fid === id);
-    if (tool) {
-        db.ref('tools/' + id).update({ clicks: (tool.clicks || 0) + 1 });
-    }
-}
-
-function openDeleteModal(id) {
-    if(confirm("Are you sure you want to delete this tool?")) {
-        db.ref('tools/' + id).remove().then(() => showToast('Deleted!', 'info'));
-    }
-}
-
-// Stats & UI Helpers
-function updateStats() {
-    const totalClicks = tools.reduce((s, t) => s + (t.clicks || 0), 0);
-    if(document.getElementById('statTools')) document.getElementById('statTools').innerText = tools.length;
-    if(document.getElementById('statClicks')) document.getElementById('statClicks').innerText = totalClicks;
-}
-
-function showToast(m, t) {
-    console.log(`${t.toUpperCase()}: ${m}`);
-    // Agar toast container hai toh wahan dikhayega
-}
-
-// Global Exposure
 window.handleLogin = handleLogin;
 window.handleAddTool = handleAddTool;
-window.openDeleteModal = openDeleteModal;
