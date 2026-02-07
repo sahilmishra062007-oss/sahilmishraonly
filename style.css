@@ -37,7 +37,7 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
-.nav-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+.nav-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; text-decoration: none;}
 
 /* HERO SECTION */
 .hero {
@@ -73,7 +73,7 @@ body {
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
-/* TOOLS GRID - MODERN LOOK */
+/* TOOLS GRID */
 .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -99,7 +99,6 @@ body {
     background: rgba(30, 41, 59, 0.9);
 }
 
-/* APP ICON (YOUR 52px BALANCED STYLE) */
 .tool-icon-container {
     width: 52px; height: 52px;
     background: #fff;
@@ -110,72 +109,63 @@ body {
 }
 
 .tool-card-img { width: 70%; height: 70%; object-fit: contain; }
-
 .tool-info h3 { font-size: 1.3rem; margin-bottom: 5px; }
 
+/* CATEGORY BADGES */
 .tool-category {
-    font-size: 0.75rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    font-weight: 700;
+    font-size: 0.75rem; padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; font-weight: 700; display: inline-block;
 }
-
 .chatbot { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
 .image { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+.video { background: rgba(139, 92, 246, 0.2); color: #a78bfa; }
 
-.tool-desc {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin: 1rem 0 1.5rem;
-    min-height: 3rem;
-}
+.tool-desc { color: var(--text-secondary); font-size: 0.9rem; margin: 1rem 0 1.5rem; min-height: 3rem; }
 
 /* BUTTONS */
 .btn-visit {
     background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-    text-align: center;
-    padding: 0.8rem;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: 0.3s;
+    color: white; text-align: center; padding: 0.8rem;
+    border-radius: 12px; text-decoration: none; font-weight: 700; transition: 0.3s;
 }
 
-.btn-visit:hover {
-    filter: brightness(1.2);
-    box-shadow: 0 5px 15px var(--primary-glow);
+/* 🔒 SECURITY CLASSES (ADD THIS) */
+.hidden { display: none !important; }
+
+#loginScreen {
+    display: flex; align-items: center; justify-content: center; min-height: 80vh;
 }
 
-/* ADMIN DASHBOARD FIX */
-.admin-section {
-    background: rgba(30, 41, 59, 0.5);
-    padding: 2.5rem;
-    border-radius: var(--radius-lg);
-    margin: 2rem 5%;
-    border: 1px solid var(--border);
+.login-card {
+    background: var(--bg-card); padding: 2.5rem; border-radius: var(--radius-lg);
+    border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center;
 }
 
-input, select, textarea {
-    width: 100%; padding: 10px; margin-bottom: 1rem;
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid var(--border);
-    border-radius: 8px; color: white;
+#adminDashboard { padding: 2rem 5%; }
+
+/* STATS */
+.stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem; margin-bottom: 2rem;
 }
 
-/* TOASTS */
-.toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-.toast {
-    background: #1e293b; border-left: 4px solid var(--primary);
-    padding: 1rem 2rem; border-radius: 10px; margin-bottom: 10px;
-    animation: slideIn 0.3s ease;
+.stat-box {
+    background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px;
+    border: 1px solid var(--border); text-align: center;
 }
 
-@keyframes slideIn {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
+.stat-box h2 { font-size: 2rem; color: var(--primary); }
+
+/* ADMIN TOOLS LIST */
+#adminToolsList { margin-top: 2rem; }
+
+.tool-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.05); padding: 1rem;
+    border-radius: 12px; margin-bottom: 0.8rem; border: 1px solid var(--border);
 }
+
+.btn-danger { background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
 
 @media (max-width: 768px) {
     .hero h1 { font-size: 2.5rem; }
