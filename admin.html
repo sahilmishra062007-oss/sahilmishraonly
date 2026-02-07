@@ -12,59 +12,23 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database-compat.js"></script>
 
     <style>
-        /* Extra Security: Initial State */
-        #adminDashboard.hidden { display: none !important; }
-        
         .login-screen {
             background: radial-gradient(circle at top right, #1e293b, #0f172a);
             height: 100vh; display: flex; align-items: center; justify-content: center;
-            transition: 0.5s ease-in-out;
         }
-
-        /* Form Enhancements */
-        .admin-section input, .admin-section select, .admin-section textarea {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            padding: 14px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            color: white;
-            transition: 0.3s;
-        }
-
-        .admin-section input:focus {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
-            outline: none;
-        }
-
-        .preview-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 5px; display: block; }
-        
+        /* Dashboard styles (Sirf login ke baad kaam aayenge) */
         .preview-box {
             width: 70px; height: 70px; border-radius: 16px; 
             background: white; margin: 10px 0 20px; 
             display: flex; align-items: center; justify-content: center;
-            border: 2px solid var(--primary); box-shadow: var(--shadow-pro);
+            border: 2px solid var(--primary);
         }
         .preview-box img { width: 75%; height: 75%; object-fit: contain; }
-
-        /* Custom Scrollbar for Manage List */
         #adminToolsList::-webkit-scrollbar { width: 6px; }
         #adminToolsList::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body data-theme="dark">
-
-    <script>
-        // Anti-Inspect 
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toUpperCase() === 'U')) {
-                e.preventDefault();
-            }
-        });
-    </script>
 
     <div id="loginScreen" class="login-screen">
         <div class="login-card">
@@ -77,85 +41,19 @@
             <div class="login-form">
                 <input type="password" id="adminPassword" placeholder="••••••••" 
                        style="text-align: center; font-size: 1.5rem; letter-spacing: 8px; width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white;">
-                <button id="loginBtn" class="btn-visit" style="width: 100%; border: none; cursor: pointer; margin-top: 25px; padding: 18px; border-radius: 12px; font-size: 1rem;">
+                <button id="loginBtn" class="btn-visit" style="width: 100%; border: none; cursor: pointer; margin-top: 25px; padding: 18px; border-radius: 12px;">
                     Authenticate Now
                 </button>
             </div>
             <div class="login-footer" style="margin-top: 25px;">
-                <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; opacity: 0.7;">
+                <a href="index.html" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">
                     <i class="fa-solid fa-house"></i> Back to Homepage
                 </a>
             </div>
         </div>
     </div>
 
-    <div id="adminDashboard" class="hidden">
-        <nav class="navbar">
-            <div class="nav-brand"><i class="fa-solid fa-bolt"></i> <span>DASHBOARD</span></div>
-            <div class="nav-links">
-                <button id="logoutBtn" class="btn-danger" style="padding: 10px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; border: none; background: #ef4444; color: white;">
-                    <i class="fa-solid fa-power-off"></i> Logout
-                </button>
-            </div>
-        </nav>
-
-        <main class="dashboard-content" style="padding: 3rem 5%;">
-            <div class="admin-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px;">
-                <div class="tool-card" style="text-align: center;">
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Total AI Tools</p>
-                    <h2 id="adminStatTools" style="font-size: 2.5rem; color: var(--primary);">0</h2>
-                </div>
-                <div class="tool-card" style="text-align: center;">
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Total Traffic</p>
-                    <h2 id="adminStatClicks" style="font-size: 2.5rem; color: #10b981;">0</h2>
-                </div>
-                <div class="tool-card" style="text-align: center;">
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">System Status</p>
-                    <h2 id="adminLastUpdated" style="font-size: 1.2rem; margin-top: 15px; color: #f59e0b;">Online</h2>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
-                <section class="admin-section tool-card">
-                    <h2 style="margin-bottom: 20px;"><i class="fa-solid fa-plus-circle"></i> Add New AI Tool</h2>
-                    <form id="addToolForm">
-                        <input type="text" id="addName" placeholder="Tool Name (e.g. ChatGPT)" required>
-                        
-                        <select id="addCategory" required>
-                            <option value="chatbot">💬 Chatbot AI</option>
-                            <option value="image">🎨 Image Generator</option>
-                            <option value="video">🎬 Video Editor</option>
-                            <option value="audio">🎵 Music/Audio</option>
-                        </select>
-                        
-                        <span class="preview-label">Icon Image URL:</span>
-                        <input type="text" id="toolImage" placeholder="https://link-to-logo.png" oninput="document.getElementById('imgPrev').src = this.value">
-                        
-                        <div class="preview-box">
-                            <img id="imgPrev" src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2103/2103633.png'">
-                        </div>
-
-                        <input type="url" id="addLink" placeholder="Official Website URL" required>
-                        <textarea id="addDesc" placeholder="Write a short catchy description for this tool..." required></textarea>
-                        
-                        <button type="submit" class="btn-visit" style="width: 100%; border: none; padding: 18px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer;">
-                            Deploy to Public Hub
-                        </button>
-                    </form>
-                </section>
-
-                <section class="admin-section tool-card">
-                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                        <h2><i class="fa-solid fa-list-check"></i> Inventory</h2>
-                        <input type="text" id="adminSearch" placeholder="Search tools..." style="width: 180px; margin-bottom: 0; padding: 8px 15px; font-size: 0.9rem;">
-                    </div>
-                    
-                    <div id="adminToolsList" style="max-height: 550px; overflow-y: auto; padding-right: 10px;">
-                        </div>
-                </section>
-            </div>
-        </main>
-    </div>
+    <div id="dynamicAdminRoot"></div>
 
     <script src="script.js"></script>
 </body>
