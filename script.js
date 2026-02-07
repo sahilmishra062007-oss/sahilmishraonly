@@ -9,16 +9,13 @@ const firebaseConfig = {
     databaseURL: "https://smart-52618-default-rtdb.firebaseio.com/"
 };
 
-// Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let tools = [];
 const IS_ADMIN_PAGE = window.location.pathname.includes('admin.html');
 
-// 🔒 SECURITY GUARD: Check if logged in
+// 🔒 SECURITY GUARD
 function isUserAdmin() {
     return sessionStorage.getItem('adminAuth') === 'true';
 }
@@ -29,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             const passInput = document.getElementById('adminPassword').value;
-            // "20180047226" Base64: MjAxODAwNDcyMjY=
             if (btoa(passInput) === "MjAxODAwNDcyMjY=") {
                 sessionStorage.setItem('adminAuth', 'true');
                 showDashboard();
@@ -39,16 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Page Load Guard: Bina login ke admin page access nahi hoga
-    if (IS_ADMIN_PAGE) {
-        if (!isUserAdmin()) {
-            const loginScr = document.getElementById('loginScreen');
-            const adminDash = document.getElementById('adminDashboard');
-            if(loginScr) loginScr.classList.remove('hidden');
-            if(adminDash) adminDash.classList.add('hidden');
-        } else {
-            showDashboard();
-        }
+    if (IS_ADMIN_PAGE && isUserAdmin()) {
+        showDashboard();
     }
 });
 
@@ -99,22 +87,59 @@ function renderPublicTools(search = '') {
     });
 }
 
-// 🛠️ ADMIN TOOLS
+// 🛡️ ADMIN PANEL CONTROL
+function showDashboard() {
+    const loginScr = document.getElementById('loginScreen');
+    const adminDash = document.getElementById('adminDashboard');
+    if(loginScr) loginScr.classList.add('hidden');
+    if(adminDash) adminDash.classList.remove('hidden');
+    
+    // 🔥 UPLOAD LOGIC SIRF LOGIN KE BAAD START HOGA
+    initAdminFunctions();
+}
+
+function initAdminFunctions() {
+    const addForm = document.getElementById('addToolForm');
+    if (addForm && !addForm.dataset.active) {
+        addForm.dataset.active = "true"; // Prevent duplicate listeners
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!isUserAdmin()) {
+                alert("Security Breach: Unauthorized!");
+                return;
+            }
+
+            const newTool = {
+                name: document.getElementById('addName').value,
+                category: document.getElementById('addCategory').value,
+                link: document.getElementById('addLink').value,
+                desc: document.getElementById('addDesc').value,
+                image: document.getElementById('toolImage').value || 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
+                clicks: 0,
+                addedAt: Date.now()
+            };
+
+            db.ref('tools').push(newTool).then(() => {
+                alert("Success: Tool Added!");
+                addForm.reset();
+            });
+        });
+    }
+}
+
+// 🛠️ ADMIN TOOLS RENDER
 function renderAdminTools() {
     const list = document.getElementById('adminToolsList');
-    if(!list || !isUserAdmin()) return;
-    list.innerHTML = '';
-
-    tools.forEach(t => {
-        list.innerHTML += `
-        <div class="tool-item" style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px;">
+    if(!list) return;
+    list.innerHTML = tools.map(t => `
+        <div class="tool-item">
             <div style="display:flex; align-items:center; gap:15px;">
                 <img src="${t.image}" style="width:40px; height:40px; border-radius:8px;">
                 <div><h4 style="margin:0">${t.name}</h4><small>${t.category}</small></div>
             </div>
-            <button onclick="deleteTool('${t.fid}')" style="background:#ef4444; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-        </div>`;
-    });
+            <button onclick="deleteTool('${t.fid}')" class="btn-danger"><i class="fa-solid fa-trash"></i></button>
+        </div>`).join('');
 }
 
 function updateStats() {
@@ -126,41 +151,6 @@ function updateStats() {
     }
 }
 
-function trackClick(id) {
-    db.ref('tools/' + id).child('clicks').transaction((c) => (c || 0) + 1);
-}
-
-// ➕ SECURE ADD TOOL
-const addForm = document.getElementById('addToolForm');
-if (addForm) {
-    addForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        // 🛡️ HARD SECURITY CHECK
-        if (!isUserAdmin()) {
-            alert("Warning: Unauthorized upload attempt! Please login first.");
-            window.location.reload();
-            return;
-        }
-
-        const newTool = {
-            name: document.getElementById('addName').value,
-            category: document.getElementById('addCategory').value,
-            link: document.getElementById('addLink').value,
-            desc: document.getElementById('addDesc').value,
-            image: document.getElementById('toolImage').value || 'https://cdn-icons-png.flaticon.com/512/2103/2103633.png',
-            clicks: 0,
-            addedAt: Date.now()
-        };
-
-        db.ref('tools').push(newTool).then(() => {
-            alert("Success: Tool Added!");
-            addForm.reset();
-        });
-    });
-}
-
-// 🗑️ SECURE DELETE
 function deleteTool(id) {
     if (!isUserAdmin()) return;
     if(confirm("Delete this tool forever?")) {
@@ -168,7 +158,10 @@ function deleteTool(id) {
     }
 }
 
-// 🚪 LOGOUT
+function trackClick(id) {
+    db.ref('tools/' + id).child('clicks').transaction((c) => (c || 0) + 1);
+}
+
 const logoutBtn = document.getElementById('logoutBtn');
 if(logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -176,24 +169,3 @@ if(logoutBtn) {
         location.href = 'index.html';
     });
 }
-
-function showDashboard() {
-    const loginScr = document.getElementById('loginScreen');
-    const adminDash = document.getElementById('adminDashboard');
-    if(loginScr) loginScr.classList.add('hidden');
-    if(adminDash) adminDash.classList.remove('hidden');
-}
-
-// SEARCH & FILTERS
-const sInput = document.getElementById('searchInput');
-if(sInput) {
-    sInput.addEventListener('input', (e) => renderPublicTools(e.target.value));
-}
-
-document.addEventListener('click', (e) => {
-    if(e.target.classList.contains('pill')) {
-        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-        e.target.classList.add('active');
-        renderPublicTools(document.getElementById('searchInput')?.value || '');
-    }
-});
