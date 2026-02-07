@@ -10,7 +10,6 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-storage-compat.js"></script>
 
     <style>
         .login-screen {
@@ -22,23 +21,12 @@
             background: white; margin: 10px 0 20px; 
             display: flex; align-items: center; justify-content: center;
             border: 2px solid var(--primary);
+            overflow: hidden;
         }
-        .preview-box img { width: 75%; height: 75%; object-fit: contain; }
+        .preview-box img { width: 80%; height: 80%; object-fit: contain; }
+        
         #adminToolsList::-webkit-scrollbar { width: 6px; }
         #adminToolsList::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        
-        /* Upload styling */
-        .file-input-wrapper {
-            margin-bottom: 15px;
-        }
-        input[type="file"] {
-            background: rgba(255,255,255,0.05);
-            padding: 10px;
-            border-radius: 8px;
-            width: 100%;
-            color: white;
-            font-size: 0.8rem;
-        }
     </style>
 </head>
 <body data-theme="dark">
@@ -54,7 +42,7 @@
             <div class="login-form">
                 <input type="password" id="adminPassword" placeholder="••••••••" 
                        style="text-align: center; font-size: 1.5rem; letter-spacing: 8px; width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: white;">
-                <button id="loginBtn" class="btn-visit" style="width: 100%; border: none; cursor: pointer; margin-top: 25px; padding: 18px; border-radius: 12px;">
+                <button id="loginBtn" class="btn-visit" style="width: 100%; border: none; cursor: pointer; margin-top: 25px; padding: 18px; border-radius: 12px; font-weight: bold;">
                     Authenticate Now
                 </button>
             </div>
