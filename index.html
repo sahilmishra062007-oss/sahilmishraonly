@@ -8,7 +8,6 @@
     <meta name="description" content="Access 100+ Premium AI tools for free. Hand-picked resources for Chatbots, Image Generation, and Video Editing by Sahil Mishra." />
     <meta name="keywords" content="AI tools hub, free ai tools, smart finder, Sahil Mishra, best ai 2026" />
     <meta name="author" content="Sahil Mishra" />
-    <meta name="robots" content="index, follow" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -18,11 +17,69 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-database-compat.js"></script>
 
     <style>
+        /* Navbar Glass Effect */
+        .navbar {
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        /* Search Bar Icon Alignment */
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .search-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+        .search-container input {
+            padding-left: 50px !important;
+        }
+
+        /* Category Pills Scrollable on Mobile */
+        .category-pills {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 5%;
+            scrollbar-width: none; /* Firefox */
+        }
+        .category-pills::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+        @media (min-width: 768px) {
+            .category-pills { justify-content: center; }
+        }
+
+        .pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .pill.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
         /* Special Button Glow */
         .magic-button {
             background: linear-gradient(45deg, #3b82f6, #8b5cf6);
             color: white !important;
-            padding: 14px 30px;
+            padding: 12px 25px;
             text-decoration: none;
             font-weight: 800;
             border-radius: 50px;
@@ -30,16 +87,7 @@
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
             transition: 0.3s;
             border: none;
-        }
-        .magic-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
-        }
-        /* Page Load Animation */
-        .animate-in { animation: fadeInUp 0.6s ease-out; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -47,44 +95,38 @@
 
     <nav class="navbar">
         <div class="nav-brand">
-            <i class="fa-solid fa-microchip"></i>
+            <i class="fa-solid fa-bolt-lightning"></i>
             <span>Smart Finder</span>
         </div>
         <div class="nav-links">
-            <a href="#tools"><i class="fa-solid fa-wand-magic-sparkles"></i> Tools</a>
-            <a href="admin.html" style="opacity: 0.5;"><i class="fa-solid fa-lock"></i></a>
+            <a href="admin.html" style="opacity: 0.6; font-size: 1.2rem;"><i class="fa-solid fa-circle-user"></i></a>
         </div>
     </nav>
 
-    <header class="hero animate-in">
-        <h1>Smartest <span class="gradient-text">AI Directory</span></h1>
-        <p>Your one-stop destination for premium AI resources — Updated Daily.</p>
+    <header class="hero">
+        <h1 class="animate-in">Smart <span class="gradient-text">AI Hub</span></h1>
+        <p class="animate-in" style="margin-bottom: 20px;">Premium AI Tools, Zero Cost.</p>
         
-        <div style="margin: 30px 0;">
+        <div class="animate-in">
             <a href="https://www.effectivegatecpm.com/iq6yvkx91w?key=4277e08d8af9deedfe83b8b968a35d6a" target="_blank" class="magic-button">
-                🚀 Unlock Premium AI Access
+                🚀 Get Premium Access
             </a>
         </div>
         
-        <div class="hero-stats">
-            <span><strong id="statTools">0</strong> Tools</span> • 
-            <span><strong id="statClicks">0</strong> Uses</span>
+        <div class="hero-stats animate-in" style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">
+            <span><i class="fa-solid fa-microchip"></i> <strong id="statTools">0</strong> Tools</span> • 
+            <span><i class="fa-solid fa-bolt"></i> <strong id="statClicks">0</strong> Served</span>
         </div>
     </header>
 
-    <div class="ad-container" style="margin: 20px auto; text-align: center;">
-        <script async="async" data-cfasync="false" src="https://pl28654120.effectivegatecpm.com/d063d6dd9ca6d36f270c456cf66223f4/invoke.js"></script>
-        <div id="container-d063d6dd9ca6d36f270c456cf66223f4"></div>
-    </div>
-
-    <section class="controls-section" id="tools">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 20px; top: 18px; color: var(--text-muted);"></i>
-            <input type="text" id="searchInput" placeholder="Search for ChatGPT, Midjourney, etc...">
+    <section class="controls-section">
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search AI tools...">
         </div>
         
-        <div class="category-pills" id="categories" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <button class="pill active" data-filter="all">All Tools</button>
+        <div class="category-pills" id="categories">
+            <button class="pill active" data-filter="all">All</button>
             <button class="pill" data-filter="chatbot">💬 Chat</button>
             <button class="pill" data-filter="image">🎨 Art</button>
             <button class="pill" data-filter="video">🎬 Video</button>
@@ -92,20 +134,24 @@
         </div>
     </section>
 
+    <div class="ad-container" style="margin: 10px auto; max-width: 90%;">
+        <script async="async" data-cfasync="false" src="https://pl28654120.effectivegatecpm.com/d063d6dd9ca6d36f270c456cf66223f4/invoke.js"></script>
+        <div id="container-d063d6dd9ca6d36f270c456cf66223f4"></div>
+    </div>
+
     <main class="main-content">
         <div id="emptyState" class="hidden" style="text-align: center; padding: 50px;">
-            <i class="fa-solid fa-search" style="font-size: 3rem; color: var(--text-muted);"></i>
-            <p>No AI tools found. Try a different search!</p>
+            <i class="fa-solid fa-ghost" style="font-size: 3rem; opacity: 0.3;"></i>
+            <p style="margin-top: 15px; color: var(--text-secondary);">No tools found...</p>
         </div>
+        
         <div class="tools-grid" id="toolsGrid">
             </div>
     </main>
 
-    <script src="https://pl28654085.effectivegatecpm.com/47/1b/c1/471bc1ae5b2135294bf6d905303c5f76.js"></script>
-
-    <footer style="text-align: center; padding: 40px; border-top: 1px solid var(--border); margin-top: 50px;">
-        <p>© 2026 Smart Finder by Sahil Mishra</p>
-    </footer >
+    <footer style="text-align: center; padding: 40px 20px; opacity: 0.5; font-size: 0.8rem;">
+        <p>© 2026 Smart Finder • Sahil Mishra</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
